@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>POO en JavaScript</title>
+	</head>
+	<body>
+		<h1>POO en JavaScript</h1>
+		<script src="producto.class.js"></script>
+		<script>
+			let unProducto = new Producto("Cafe", 340, 8.23, true)  // Estoy instanciando un objeto "Producto". Una instancia sería como una réplica de la clase Producto.		
+			let otroProducto = new Producto("Jugo de naranja", 25, 3.20, false)
+			let tercerProducto = new Producto("Té de tilo", 165, 199.99)
+
+			otroProducto.aplicarDescuento(15)
+
+			unProducto.Mostrar()  // Incoco al metodo Mostrar a través de la "instancia" del objeto Producto
+			otroProducto.Mostrar()
+			tercerProducto.Mostrar()
+
+			console.log( unProducto )
+			console.log( otroProducto )
+			console.log( tercerProducto )
+
+		</script>
+	</body>
+</html>
