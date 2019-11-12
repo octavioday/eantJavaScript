@@ -10,6 +10,13 @@ class Producto {
 		this.precio = p
 		this.imagen = i
 		this.disponible = d		
+
+		this.vDOM = document.createElement("article") // <article></article>
+
+		this.state = { // Para hacerle un seguimiento al producto
+			anexado : false,
+			version : 0
+		}
 	}
 
 
@@ -29,16 +36,9 @@ class Producto {
 
 	set Disponible (value){ // Se usan las mayúsculas para los metodos de uso público y con minúscula los privados (como el constructor)
 
-		if( value == this.disponible ) {
-			alert(`Ya esta en ${this.disponible}`)
-			return
-		}
+		let accion = value ? "habilitar" : "deshabilitar"
 
-		let estado = value ? "habilitar" : "deshabilitar"
-
-		if(confirm(`Desea ${estado} el producto "${this.nombre}"`)){
-			this.disponible = value
-		}
+		if(confirm(`Desea ${accion} el producto "${this.nombre}"`))	this.disponible = value
 	}
 
 
@@ -57,25 +57,55 @@ class Producto {
 		document.querySelector("#productos-destacados").appendChild( ficha )
 */
 
-		let ficha = document.createElement("article") // <article></article>
+		let estilo = this.disponible ? "bg-white text-dark" : "bg-dark text-light"
 
-			ficha.classList.add("col-lg-4","col-md-6","mb-4","producto",) // <article class="col-lg-4 col-md-6 mb-4 producto"></article>
+		// Manipulación de estructura
+		this.vDOM.classList.add("col-lg-4","col-md-6","mb-4","producto",) // <article class="col-lg-4 col-md-6 mb-4 producto"></article>
 
-			ficha.innerHTML = 					
-				`<div class="card h-100 bg-dark text-light">
-					<a href="#">
-						<img class="card-img-top" src="${this.imagen}" alt="${this.nombre}">
-		  			</a>
-					<div class="card-body">
-						<h4 class="card-title">
-		  					<a href="#">${this.nombre}</a>
-						</h4>
-						<h5 class="btn btn-warning">${this.Precio}</h5>
-						<p class="card-text">${this.stock} unid.</p>
-					</div>
-				</div>`
 
-		document.querySelector( selector ).appendChild( ficha )
+		// Manipulación de contenido
+		this.vDOM.innerHTML = 					
+			`<div class="card h-100 ${estilo}">
+				<a href="#">
+					<img class="card-img-top" src="${this.imagen}" alt="${this.nombre}">
+	  			</a>
+				<div class="card-body">
+					<h4 class="card-title">
+	  					<a href="#">${this.nombre}</a>
+					</h4>
+					<h5 class="btn btn-warning m-0">${this.Precio}</h5>
+					<button class="btn btn-danger">${ this.disponible ? "Desactivar" : "Activar"}</button>
+					<p class="card-text">${this.stock} unid.</p>
+				</div>
+			</div>`
+
+		// Manipulación de comportamiento
+		this.vDOM.querySelector("button").onclick = (e) => { // si uso function, el this es el button no el producto (superior)
+
+		/*
+			let accion = this.disponible ? "deshabilitar" : "habilitar"
+
+			let pregunta = `Esta seguro que desea ${accion} el producto ${this.nombre}?`
+
+			if ( confirm(pregunta) ) this.disponible = !this.disponible // no hace falta el == true ni las llaves pq es la unica validacion que hace
+		*/
+
+			this.Disponible = !this.disponible // usamos el seter
+
+			this.Precio = prompt("Ingrese nuvo precio")
+
+			this.Mostrar() // this es el objeto padre "El producto"
+
+			console.log( e.target) // el objeto que provocó el evento
+			
+			}
+
+		if(this.state.anexado == false){
+	        // Anexarlo en la interfaz
+			document.querySelector( selector ).appendChild( this.vDOM )	
+			this.state.anexado = true		
+		}
+
 	}
 
 	aplicarDescuento(valor){
