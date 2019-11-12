@@ -66,29 +66,87 @@
 			//window.localStorage.removeItem("USUARIOS") // elimina
 			//window.localStorage.clear() // limpia todo
 
+			// Creando una función asincrónica con JavaScript utilizando promise (crea un objeto difereido)
+			/*const promesa = new Promise(function(ok, error){
+
+				window.setTimeout(function(){
+
+					let numerito = Math.random()
+
+					if( numerito < 0.5 ) {
+						ok(`${numerito} vale menos que 0.5`)
+					} else {
+						error(`${numerito} vale más que 0.5`)
+					}
+				}, 5000) 
+						
+			})
+
+			promesa.then(function(rta){ // Esto ocurre cuando sale bien
+				alert(`${rta} (mensaje desde el método then)`)
+			}) 
+
+			promesa.catch(function(rta){// Esto ocurre cuando sale mal
+
+				alert(`${rta} (mensaje desde el método catch)`)
+			}) 
+
+			promesa.finally(function(){
+				confirm("se entendio?")
+			})
+			*/
+
 
 			//////////////////////////////////////////////
-			const ajax = new XMLHttpRequest()
-			ajax.open("GET", "https://api.myjson.com/bins/dcg2p")
-			ajax.onload = function(){ 
+			const promesa = new Promise(function(ok, error){
 
-				if( this.status == 200 ){
+				if( !window.localStorage.getItem("PRODUCTOS") ){ // Sino no existe el localStorage, traer los datos de la API
+					
+					const ajax = new XMLHttpRequest()
+					ajax.open("GET", "https://api.myjson.com/bins/dcg2p")
+					ajax.onload = function(){ //peticion exitosa
 
-					// Guardar datos de la petición
+						if( this.status == 200 ){
 
-					window.localStorage.setItem("PRODUCTOS", this.response)
+							// Guardar datos de la petición
 
-					let productos = Producto.parse( this.response ) 
+							window.localStorage.setItem("PRODUCTOS", this.response)
 
-					productos.forEach(producto => {
-						
-						producto.Mostrar()
-					})
-				}
-			} 
+							ok(this.response) // Ejecutamos el metodo then
+						}else {
+							this.onerror()
+						}
+					}
+					ajax.onerror = function(){ // Peticion erronea
 
-			ajax.send()
+						error( this.statusText)
+					
+					} 	
+					ajax.send()	// ejecutar peticion asincronica (esperar a que responda la respuesta del server)		
+				} else{ // Si existe el localStorage lo usamos para crear/mostrar los objetos producto
+					ok( window.localStorage.getItem("PRODUCTOS") ) // Ejecuto el metodo then
+				}				
+			})
+
+			promesa.then(function(rta){ // ocurre cuando hay datos en el storege
+
+				let productos = Producto.parse(rta)
+
+				productos.forEach(producto => {
+					
+					producto.Mostrar()
+				})
+			})
+
+			promesa.catch(function(rta){
+
+				document.querySelector("#productos-destacados").innerText = "Error amigo"
+
+			})
+
+			promesa.finally(function(){
+				confirm("Se entendio?")
+			})
 		</script>
-
 	</body>
 </html>
