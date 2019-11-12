@@ -56,8 +56,31 @@
 		</footer>
 		<script src="https://blackrockdigital.github.io/startbootstrap-shop-item/vendor/jquery/jquery.min.js"></script>
 		<script src="https://blackrockdigital.github.io/startbootstrap-shop-item/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+		<script src="https://apis.google.com/js/platform.js" async defer></script>
 		<script src="producto.class.js"></script>
 		<script>
+			////////////// LOGIN CON GOOGLE /////////////
+
+
+			gapi.load("auth2", function(){
+
+				window.auth = gapi.auth2.init({ // Estamos creando una variable global (una propiedad a la variable window)
+					client_id : "238235070701-a4rq3is6v4ntub6n72nd4ukmplj4rq0a.apps.googleusercontent.com", // lo saque del json que baje de google
+					cookiepolicy : "single_host_origin"
+				}) 
+
+			})
+
+			// Mëtodos importantes de Google Sign In
+			// -------------------------------------
+			// auth.isSignedIn.get() // chequea si esta logueado
+			// auth.signIn() // para loguearme
+			// auth.signOut() // para desloguearme
+			// auth.currentUser.get() // para consultar la info
+
+
+			////////////// LOGIN CON GOOGLE /////////////
+
 			/* Persistencia en JavaScript con la API Storage */
 			// window.localStorage (la info permanente hasta que se borra) && window.sessionStorage (si cierro la pestaña, se borra) //
 

@@ -40,6 +40,8 @@ class Producto {
 		let accion = value ? "habilitar" : "deshabilitar"
 
 		if(confirm(`Desea ${accion} el producto "${this.nombre}"`))	this.disponible = value
+
+		this.sincronizar()
 	}
 
 
@@ -111,13 +113,21 @@ class Producto {
 
 		this.vDOM.querySelector(".btn-descuento").onclick = this.aplicarDescuento.bind( this ) // "Enlazar" Para que cuando quiera ejecutar la isntancia apliarDescuento el this no sea el boton sino el objeto
 
+		
+		this.vDOM.querySelector("img").onclick = () => {
+			this.imagen = prompt("Ingrese URL de imagen")
+			this.Mostrar()
+			this.sincronizar()
+
+		}
+
 		if(this.state.anexado == false){
 	        // Anexarlo en la interfaz
 			document.querySelector( selector ).appendChild( this.vDOM )	
 			this.state.anexado = true		
 		}
 
-		this.sincronizar() // Para enviarlo al local storage
+		//this.sincronizar() // Para enviarlo al local storage
 
 	}
 
@@ -132,14 +142,25 @@ class Producto {
 		this.precio = this.precio - importe
 
 		this.Mostrar()
+		this.sincronizar()
 	}
 
 
 	sincronizar(){
 
-		let storage = JSON.parse( localStorage.getItem("PRODUCTOS")) // De JSON a object
+		let storage = JSON.parse( localStorage.getItem("PRODUCTOS") )// De JSON a object
 
-		storage.forEach( item => {
+		// let foundItem = storage.find(item => item.idProducto == this.ID)
+
+		let foundIndex = storage.findIndex(item => item.idProducto == this.ID)
+
+		storage[foundIndex].Precio = this.precio // Para que el dato quede almacenado en mi base
+		storage[foundIndex].Disponible = this.disponible
+		storage[foundIndex].Imagen = this.imagen
+
+		localStorage.setItem("PRODUCTOS", JSON.stringify(storage) )
+
+/*		storage.forEach( item => {
 
 			if( item.idProducto == this.ID){
 
@@ -152,8 +173,8 @@ class Producto {
 
 		} )
 
-
-		localStorage.setItem("PRODUCTOS", JSON.stringify(storage)) // De object a JSON
+*/
+		//localStorage.setItem("PRODUCTOS", JSON.stringify(storage)) // De object a JSON
 	}
 
 	// METODOS DE CLASE (estáticos)
@@ -166,7 +187,7 @@ class Producto {
 
 		if( datos instanceof Array ){ 
 
-			return datos.map( item => new Producto(item.idProducto, item.Nombre, item.Stock, item.Precio, item.Imagen) ) // Esto simplifica el proceso de la clase 3.
+			return datos.map( item => new Producto(item.idProducto, item.Nombre, item.Stock, item.Precio, item.Imagen, item.Disponible) ) // Esto simplifica el proceso de la clase 3.
 
 		} else if ( datos instanceof Object){ // En el caso que la API me diera los datos de un solo producto
 			let producto = new Producto(datos.idProducto, datos.Nombre, datos.Stock, datos.Precio, datos.disponible, datos.Imagen)
