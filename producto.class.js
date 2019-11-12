@@ -44,9 +44,9 @@ class Producto {
 
 	// METODOS DE INSTANCIA
 
-	Mostrar(){
+	Mostrar(selector){ // Ejemplo "#productos-destacados"
 
-		let ficha = document.querySelector(".producto").cloneNode(true)
+/*	let ficha = document.querySelector(".producto").cloneNode(true)
 
 			ficha.querySelector(".card-title a").innerText = this.nombre
 			ficha.querySelector(".card-body h5").innerText = this.Precio // Con mayúscula uso el geter
@@ -55,6 +55,27 @@ class Producto {
 			ficha.classList.remove("d-none")
 
 		document.querySelector("#productos-destacados").appendChild( ficha )
+*/
+
+		let ficha = document.createElement("article") // <article></article>
+
+			ficha.classList.add("col-lg-4","col-md-6","mb-4","producto",) // <article class="col-lg-4 col-md-6 mb-4 producto"></article>
+
+			ficha.innerHTML = 					
+				`<div class="card h-100 bg-dark text-light">
+					<a href="#">
+						<img class="card-img-top" src="${this.imagen}" alt="${this.nombre}">
+		  			</a>
+					<div class="card-body">
+						<h4 class="card-title">
+		  					<a href="#">${this.nombre}</a>
+						</h4>
+						<h5 class="btn btn-warning">${this.Precio}</h5>
+						<p class="card-text">${this.stock} unid.</p>
+					</div>
+				</div>`
+
+		document.querySelector( selector ).appendChild( ficha )
 	}
 
 	aplicarDescuento(valor){
@@ -68,7 +89,9 @@ class Producto {
 
 	static parse(json){
 		
-		let datos = JSON.parse(json)
+		// let datos = JSON.parse(json) --- No haxce falta parsearlo pq lo estoy haciendo con el método fetch
+
+		let datos = (typeof json == "string") ? JSON.parse(json) : json // Método ternario
 
 		if( datos instanceof Array ){ 
 

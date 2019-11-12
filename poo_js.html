@@ -30,7 +30,7 @@
 			<!-- AREA PRODUCTOS DESTACADOS -->
 			<section id="productos-destacados" class="row">
 				<!-- Inicio Producto #1 -->
-				<article class="col-lg-4 col-md-6 mb-4 d-none producto">
+<!--				<article class="col-lg-4 col-md-6 mb-4 d-none producto">
 					<div class="card h-100">
 						<a href="#">
 							<img class="card-img-top" src="http://placehold.it/700x400" alt="">
@@ -44,6 +44,7 @@
 						</div>
 					</div>
 				</article>
+-->
 				<!-- Fin de Producto #1 -->
 ​
 			</section>
@@ -98,6 +99,7 @@
 
 
 			//////////////////////////////////////////////
+/*
 			const promesa = new Promise(function(ok, error){
 
 				if( !window.localStorage.getItem("PRODUCTOS") ){ // Sino no existe el localStorage, traer los datos de la API
@@ -147,6 +149,62 @@
 			promesa.finally(function(){
 				confirm("Se entendio?")
 			})
+*/
+
+			//////////////////////////
+
+			// AJAX Moderno con el método fetch()//
+/*
+			fetch("https://api.myjson.com/bins/dcg2p").then(function(rta){  // Obtener lo del link. No hace falta el JSON parse.
+
+				return rta.json() 
+
+			}).then(function(items){
+
+				return items[2]
+
+			}).then(function(item){
+
+				return item.Nombre
+
+			}).then(function(nombre){
+
+				console.log( nombre )
+
+			})
+*/
+
+			const crearCatalogo = function(items){
+
+				let productos = Producto.parse(items)
+
+				productos.forEach( producto => { producto.Mostrar("#productos-destacados") })
+			}
+
+		/*	if( !window.localStorage.getItem("PRODUCTO")){
+				// Obtener los datos de la API
+				fetch("https://api.myjson.com/bins/dcg2p").then(function(rta){
+
+					return rta.json()
+
+				}).then(function(items){
+
+					window.localStorage.setItem("PRODUCTO", JSON.stringify(items)) // Vuelvo a convertir en string los objetos del JSON
+					crearCatalogo(items) // Los paso como object
+				})
+		*/  //// VERSION SIMPLIFICADA CON ARROW FUNCTION ( saco paréntesis porque es una sola variable y los corchetes porque solo hace el return)
+			if( !window.localStorage.getItem("PRODUCTO")){
+			// Obtener los datos de la API
+				fetch("https://api.myjson.com/bins/dcg2p")
+				.then(rta => rta.json() ) // no hace falta ni escribir el return
+				.then(items => {
+					window.localStorage.setItem("PRODUCTO", JSON.stringify(items)) // Vuelvo a convertir en string los objetos del JSON
+					crearCatalogo(items) // Los paso como object
+				})
+			} else {
+				crearCatalogo( window.localStorage.getItem("PRODUCTO") ) // Los paso como string
+			}
+
 		</script>
 	</body>
 </html>
