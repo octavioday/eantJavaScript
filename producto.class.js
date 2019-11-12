@@ -3,8 +3,9 @@ class Producto {
 
 	// CONSTRUCTOR
 
-	constructor(n, s, p, i, d = true){  // En el caso de que d no este definido, asignale true
+	constructor(id, n, s, p, i, d = true){  // En el caso de que d no este definido, asignale true
 		// Atributos
+		this.ID = id
 		this.nombre = n
 		this.stock	= s
 		this.precio = p
@@ -62,6 +63,7 @@ class Producto {
 		// Manipulación de estructura
 		this.vDOM.classList.add("col-lg-4","col-md-6","mb-4","producto",) // <article class="col-lg-4 col-md-6 mb-4 producto"></article>
 
+		this.vDOM.id = `prod-${this.ID}`
 
 		// Manipulación de contenido
 		this.vDOM.innerHTML = 					
@@ -75,6 +77,7 @@ class Producto {
 					</h4>
 					<h5 class="btn btn-warning m-0">${this.Precio}</h5>
 					<button class="btn btn-danger">${ this.disponible ? "Desactivar" : "Activar"}</button>
+					<button class="btn btn-primary btn-descuento">Aplicar descuento</button>
 					<p class="card-text">${this.stock} unid.</p>
 				</div>
 			</div>`
@@ -92,13 +95,21 @@ class Producto {
 
 			this.Disponible = !this.disponible // usamos el seter
 
-			this.Precio = prompt("Ingrese nuvo precio")
+			this.Precio = prompt("Ingrese nuevo precio")
 
 			this.Mostrar() // this es el objeto padre "El producto"
 
 			console.log( e.target) // el objeto que provocó el evento
-			
-			}
+		}
+/*
+		this.vDOM.querySelector(".btn-descuento").onclick = () => {
+			let valor = prompt(`Indique el porcentaje de descuento para ${this.nombre}`)
+			this.aplicarDescuento(valor)
+			this.Mostrar()
+		}
+*/
+
+		this.vDOM.querySelector(".btn-descuento").onclick = this.aplicarDescuento.bind( this ) // "Enlazar" Para que cuando quiera ejecutar la isntancia apliarDescuento el this no sea el boton sino el objeto
 
 		if(this.state.anexado == false){
 	        // Anexarlo en la interfaz
@@ -106,14 +117,44 @@ class Producto {
 			this.state.anexado = true		
 		}
 
+		this.sincronizar() // Para enviarlo al local storage
+
 	}
 
-	aplicarDescuento(valor){
+	aplicarDescuento(valor = false){
+
+		// valor = valor == null ? prompt(`Indique el porcentaje de descuento para ${this.nombre}`) : valor
+
+		valor = isNaN(valor) ? prompt(`Indique el porcentaje de descuento para ${this.nombre}`) : valor
+
 		let importe = (this.precio * valor) / 100
 
 		this.precio = this.precio - importe
+
+		this.Mostrar()
 	}
 
+
+	sincronizar(){
+
+		let storage = JSON.parse( localStorage.getItem("PRODUCTOS")) // De JSON a object
+
+		storage.forEach( item => {
+
+			if( item.idProducto == this.ID){
+
+				item.Nombre = this.nombre
+				item.Stock = this.stock
+				item.Precio = this.precio
+				item.Disponible = this.disponible
+				return
+			}
+
+		} )
+
+
+		localStorage.setItem("PRODUCTOS", JSON.stringify(storage)) // De object a JSON
+	}
 
 	// METODOS DE CLASE (estáticos)
 
@@ -125,10 +166,10 @@ class Producto {
 
 		if( datos instanceof Array ){ 
 
-			return datos.map( item => new Producto(item.Nombre, item.Stock, item.Precio, item.Imagen) ) // Esto simplifica el proceso de la clase 3.
+			return datos.map( item => new Producto(item.idProducto, item.Nombre, item.Stock, item.Precio, item.Imagen) ) // Esto simplifica el proceso de la clase 3.
 
 		} else if ( datos instanceof Object){ // En el caso que la API me diera los datos de un solo producto
-			let producto = new Producto(datos.Nombre, datos.Stock, datos.Precio, datos.disponible, datos.Imagen)
+			let producto = new Producto(datos.idProducto, datos.Nombre, datos.Stock, datos.Precio, datos.disponible, datos.Imagen)
 			console.error("No convierto nada en Producto")
 		}
 	}

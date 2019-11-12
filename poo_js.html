@@ -178,7 +178,14 @@
 
 				let productos = Producto.parse(items)
 
-				productos.forEach( producto => { producto.Mostrar("#productos-destacados") })
+				let descuento = confirm("Aplicar descuento de 50%?") ? 50 : -1	
+
+				productos.forEach( producto => { 
+
+					producto.Mostrar("#productos-destacados") 
+
+					producto.aplicarDescuento(descuento)
+				})
 			}
 
 		/*	if( !window.localStorage.getItem("PRODUCTO")){
@@ -193,16 +200,16 @@
 					crearCatalogo(items) // Los paso como object
 				})
 		*/  //// VERSION SIMPLIFICADA CON ARROW FUNCTION ( saco paréntesis porque es una sola variable y los corchetes porque solo hace el return)
-			if( !window.localStorage.getItem("PRODUCTO")){
+			if( !window.localStorage.getItem("PRODUCTOS")){
 			// Obtener los datos de la API
 				fetch("https://api.myjson.com/bins/dcg2p")
 				.then(rta => rta.json() ) // no hace falta ni escribir el return
 				.then(items => {
-					window.localStorage.setItem("PRODUCTO", JSON.stringify(items)) // Vuelvo a convertir en string los objetos del JSON
+					window.localStorage.setItem("PRODUCTOS", JSON.stringify(items)) // Vuelvo a convertir en string los objetos del JSON
 					crearCatalogo(items) // Los paso como object
 				})
 			} else {
-				crearCatalogo( window.localStorage.getItem("PRODUCTO") ) // Los paso como string
+				crearCatalogo( window.localStorage.getItem("PRODUCTOS") ) // Los paso como string
 			}
 
 		</script>
