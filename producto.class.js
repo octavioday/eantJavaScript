@@ -3,11 +3,12 @@ class Producto {
 
 	// CONSTRUCTOR
 
-	constructor(n, s, p, d = true){  // En el caso de que d no este definido, asignale true
+	constructor(n, s, p, i, d = true){  // En el caso de que d no este definido, asignale true
 		// Atributos
 		this.nombre = n
 		this.stock	= s
 		this.precio = p
+		this.imagen = i
 		this.disponible = d		
 	}
 
@@ -45,16 +46,15 @@ class Producto {
 
 	Mostrar(){
 
-		if(this.disponible){ 
-			let color = "green" 
-		} else {
-			let color = "red"
-		}
+		let ficha = document.querySelector(".producto").cloneNode(true)
 
-		// Como creamos la variable con let, quedo dentro del if y no llego al document.write. Para eso usamos la siguiente sentencia que reemplaza al if
+			ficha.querySelector(".card-title a").innerText = this.nombre
+			ficha.querySelector(".card-body h5").innerText = this.Precio // Con mayúscula uso el geter
+			ficha.querySelector(".card-img-top").src = this.imagen
 
-		let color = ( this.disponible ) ? "green" : "red" // No hace falta especificar el if ni el else ni el == true
-		document.write(`<p style="color:${color}">Hay <strong>${this.stock}</strong> uni. de <strong>${this.nombre}</strong> que valen <em>ARG ${this.precio}<em> c/u</p>`)
+			ficha.classList.remove("d-none")
+
+		document.querySelector("#productos-destacados").appendChild( ficha )
 	}
 
 	aplicarDescuento(valor){
@@ -68,32 +68,14 @@ class Producto {
 
 	static parse(json){
 		
-		let datos = JSON.parse(json) // De JSON a object
-		// console.log("Estos son los datos")
-		// console.log( datos )
+		let datos = JSON.parse(json)
 
-		if( datos instanceof Array ){ // Un array es un objeto que almacena objetos
-			// debugger // puedo ejecutarlo para frenar el codigo e ir ejecutandolo paso por paso manualmente
+		if( datos instanceof Array ){ 
 
+			return datos.map( item => new Producto(item.Nombre, item.Stock, item.Precio, item.Imagen) ) // Esto simplifica el proceso de la clase 3.
 
-			let productos = new Array() // Creo un array vacío para almacenar los objetos "producto"
-
-			datos.forEach( (item) => { // Estoy usando la arrow function que reemplaza a la function. Recirri ek arra de Ibject para instanciar objetos Producto
-				// console.log("El siguiente object deberá convertir	se en producto:")
-				// console.log(item.nombre)
-
-				let producto = new Producto(item.nombre, item.stock, item.precio, item.disponible) // Instanciar un objeto Producto con los datos de cada Object
-				productos.push(producto) // Metodo de instancia push del objeto productos que es de tipo array. Guardar el objeto Producto instanciado en el Array nuevo
-
-				// console.log(producto)
-
-			})
-
-			return (productos)  // Retornar el nuvo array una vez que se hayan instanciado todos los objetos Producto
-
-		} else if ( datos instanceof Object){
-			let producto = new Producto(datos.nombre, datos.stock, datos.precio, datos.disponible)
-		} else {
+		} else if ( datos instanceof Object){ // En el caso que la API me diera los datos de un solo producto
+			let producto = new Producto(datos.Nombre, datos.Stock, datos.Precio, datos.disponible, datos.Imagen)
 			console.error("No convierto nada en Producto")
 		}
 	}
