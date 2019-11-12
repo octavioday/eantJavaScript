@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Objetos en JavaScript</title>
+	</head>
+	<body>
+		<h1>Objetos en JavaScript</h1>
+
+		<script>
+
+			// CONSTRUCTOR //
+
+			// Un objeto se define por lo que es (sus propiedades) y lo que hace (sus funcionalidades). Que puedo hacer con un producto?
+
+			const crearProducto = function(n, s, p, d){ // function crearProducto(nombre, stock, precio, disponible){....}
+
+				let elProducto = new Object()
+
+				// Propiedades
+				elProducto.nombre = n
+				elProducto.stock = s
+				elProducto.precio = p
+				elProducto.disponible = d
+
+
+				// Metodos (creo una propiedad y le asigno una función)
+				elProducto.Mostrar = function(){ // Closure (fc dentro de otra fc)
+
+					window.document.write(`<p>Hay ${elProducto.stock} unidades de ${elProducto.nombre} que valen ${elProducto.precio} c/u<p>`)
+
+				}
+
+				return elProducto
+
+			}
+
+			let cuartoProducto = crearProducto("Malbec", 200, 185.99, true)
+			let ultimoProducto = crearProducto("Cabernet", 100, 125.99, true)
+
+			cuartoProducto.Mostrar()
+			ultimoProducto.Mostrar()
+
+
+			///////////////////////////////////////////////////
+
+			/* 
+			let nombre = "Café" // string
+			let stock = 500 // integer
+			let precio = 68.55 // fluid
+			let disponible = true // boolean
+
+			Para crear mas productos.
+
+			Opción 1 - variables sueltas
+			let nombre2 = "Jugo"
+			let stock2 = 520
+			let precio2 = 15.65
+			let disponible2 = false
+
+			Imprimir producto
+			window.document.write( "Existe un producto llamado: " + nombre2 )
+
+
+			Opción 2 - datos en una colección Array
+			let producto = ["Jugo",520,15.65,false]
+
+			Imprimir producto
+			window.document.write( "Existe un producto llamado: " + producto[0] )
+
+			Opción 3 - Datos en un objeto (literal)
+			let otroProducto = {
+				nombre : "Jugo2"
+				stock : 520
+				precio : 85.45
+				disponible : true
+			}
+
+			Imprimir producto
+			window.document.write( "Existe un producto llamado: " + otroProducto.nombre)
+
+			Opción 4 - Datos en un objeto diferido
+			let tercerProducto = new Object()
+
+			tercerProducto.nombre = "Te de hierbas"
+			tercerProducto.stock = 320
+			tercerProducto.precio = 3.65
+			tercerProducto.disponible = false
+
+			Imprimir producto
+
+			// ES5
+			window.document.write( "Hay " + tercerProducto.stock + " unidades de " + tercerProducto.nombre + " que valen " + tercerProducto.precio + " c/u")
+
+			// ES6
+			window.document.write(`Hay ${tercerProducto.stock} unidades de ${tercerProducto.nombre} que valen ${tercerProducto.precio} c/u`)
+
+			let cuartoProducto = crearProducto("Malbec", 200, 185.99, true)
+
+			// Imprimir producto
+
+			window.document.write(`Hay ${cuartoProducto.stock} unidades de ${cuartoProducto.nombre} que valen ${cuartoProducto.precio} c/u`)
+			*/
+
+		</script>
+	</body>
+</html>
