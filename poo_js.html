@@ -8,6 +8,7 @@
 		<h1>POO en JavaScript</h1>
 		<script src="producto.class.js"></script>
 		<script>
+/* Clase 2
 			let unProducto = new Producto("Cafe", 340, 8.23, true)  // Estoy instanciando un objeto "Producto". Una instancia sería como una réplica de la clase Producto.		
 			let otroProducto = new Producto("Jugo de naranja", 25, 3.20, false)
 			let tercerProducto = new Producto("Té de tilo", 165, 199.99)
@@ -22,6 +23,37 @@
 			console.log( otroProducto )
 			console.log( tercerProducto )
 
+*/
+			////////////////////////////////////////
+
+			// Acá programo las cosas picantes con AJAX
+ 
+
+			const ajax = new XMLHttpRequest() // SE EJECUTA CON ajax.send()
+
+			ajax.open("GET", "https://api.myjson.com/bins/1giaf3")  // Metodo de instancia. Vamos a usar link que nos dio Silvio https://api.myjson.com/bins/1giaf3
+
+			// Evento
+			ajax.onload = function(){ // Petición exitosa
+
+				console.log (this)
+
+				if( this.status == 200 ){ // 200 es respuesta exitosa del servidor (si hubiese utilizado arrow function no me huiera detectado el this)
+
+					console.log( this.response )
+
+					// let productos = JSON.parse(this.response) // De JSON a object
+					let productos = Producto.parse( this.response ) // de JSON a Producto.
+
+					productos.forEach(producto => {
+						producto.Mostrar()
+					})
+				}
+			} 
+			ajax.onerror = function(){  // Petición errónea
+
+			}
+			//ajax.send()  // Método de instancia
 		</script>
 	</body>
 </html>

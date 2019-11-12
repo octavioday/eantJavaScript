@@ -64,7 +64,37 @@ class Producto {
 	}
 
 
-	// METODOS DE CLASE
+	// METODOS DE CLASE (estáticos)
+
+	static parse(json){
+		
+		let datos = JSON.parse(json) // De JSON a object
+		// console.log("Estos son los datos")
+		// console.log( datos )
+
+		if( datos instanceof Array ){ // Un array es un objeto que almacena objetos
+			// debugger // puedo ejecutarlo para frenar el codigo e ir ejecutandolo paso por paso manualmente
 
 
+			let productos = new Array() // Creo un array vacío para almacenar los objetos "producto"
+
+			datos.forEach( (item) => { // Estoy usando la arrow function que reemplaza a la function. Recirri ek arra de Ibject para instanciar objetos Producto
+				// console.log("El siguiente object deberá convertir	se en producto:")
+				// console.log(item.nombre)
+
+				let producto = new Producto(item.nombre, item.stock, item.precio, item.disponible) // Instanciar un objeto Producto con los datos de cada Object
+				productos.push(producto) // Metodo de instancia push del objeto productos que es de tipo array. Guardar el objeto Producto instanciado en el Array nuevo
+
+				// console.log(producto)
+
+			})
+
+			return (productos)  // Retornar el nuvo array una vez que se hayan instanciado todos los objetos Producto
+
+		} else if ( datos instanceof Object){
+			let producto = new Producto(datos.nombre, datos.stock, datos.precio, datos.disponible)
+		} else {
+			console.error("No convierto nada en Producto")
+		}
+	}
 }
