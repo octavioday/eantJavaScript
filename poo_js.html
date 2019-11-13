@@ -62,7 +62,7 @@
 
 			gapi.load("auth2", function(){
 				window.auth = gapi.auth2.init({
-					client_id : "238235070701-6r207pblalhivjopvp43p0n2172o69ss.apps.googleusercontent.com",
+					client_id : "238235070701-gvjc8o86qv3evd5jghm4riq7teubenjl.apps.googleusercontent.com",
 					cookiepolicy : "single_host_origin"
 				})
 			})
@@ -87,6 +87,17 @@
 						bienvenida()
 					})
 				}
+			}
+
+			document.querySelector("#logout").onclick = function(e){
+				auth.signOut() // cerramos sesión
+
+				window.user = null // borramos los datos del usuario
+
+				this.parentNode.classList.add("d-none")
+				
+				document.querySelector("#login").parentNode.classList.remove("d-none")
+
 			}
 
 			//////////// LOGIN CON GOOGLE ////////////
