@@ -53,7 +53,7 @@
 		<script>
 			//////////// LOGIN CON GOOGLE ////////////
 			const bienvenida = () => {
-				window.user = auth2.currentUser.get().getBasicProfile() // Obtengo los datos del usuario
+				window.user = auth.currentUser.get().getBasicProfile() // Obtengo los datos del usuario
 				document.querySelector("#logout span").innerText = user.getName() // Mostrar el nombre del usuario
 				document.querySelector("#logout").parentNode.classList.remove("d-none") // Muestro el boton logout
 				document.querySelector("#login").parentNode.classList.add("d-none") // Oculto el boton ingresar				
@@ -95,7 +95,7 @@
 				window.user = null // borramos los datos del usuario
 
 				this.parentNode.classList.add("d-none")
-				
+
 				document.querySelector("#login").parentNode.classList.remove("d-none")
 
 			}
