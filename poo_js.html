@@ -7,7 +7,7 @@
 		<link rel="stylesheet" href="https://blackrockdigital.github.io/startbootstrap-shop-item/vendor/bootstrap/css/bootstrap.min.css">
 		<link rel="stylesheet" href="https://blackrockdigital.github.io/startbootstrap-shop-item/css/shop-item.css">
 	</head>
-​
+
 	<body>
 		<header class="navbar navbar-expand-lg navbar-dark bg-secondary fixed-top">
 			<div class="container">
@@ -17,8 +17,11 @@
 				</button>
 				<nav class="collapse navbar-collapse" id="menu">
 					<ul class="navbar-nav ml-auto">
-						<li class="nav-item active">
-							<a class="nav-link" href="#">&#x1F512; Ingresar</a>
+						<li class="nav-item">
+							<a id="login" class="nav-link" href="#">&#x1F512; Ingresar</a>
+						</li>
+						<li class="nav-item d-none">
+							<a id="logout" class="nav-link" href="#">Bienvenido <span>{{USUARIO}}</span></a>
 						</li>
 					</ul>
 				</nav>
@@ -26,27 +29,16 @@
 		</header>
 		<main class="container">
 			<h2 class="w-100 my-3 p-3 border">&#x2B50; Productos Destacados</h2>
-​
+
 			<!-- AREA PRODUCTOS DESTACADOS -->
 			<section id="productos-destacados" class="row">
-				<!-- Inicio Producto #1 -->
-<!--				<article class="col-lg-4 col-md-6 mb-4 d-none producto">
-					<div class="card h-100">
-						<a href="#">
-							<img class="card-img-top" src="http://placehold.it/700x400" alt="">
-		  				</a>
-						<div class="card-body">
-							<h4 class="card-title">
-			  					<a href="#">Producto X</a>
-							</h4>
-							<h5 class="btn btn-warning">$999.99</h5>
-							<p class="card-text">No deje pasar esta oportunidad... COMPRE YA!</p>
-						</div>
-					</div>
-				</article>
--->
-				<!-- Fin de Producto #1 -->
-​
+
+			</section>
+
+			<h2 class="w-100 my-3 p-3 border">&#x2B50; Ultimos Productos</h2>
+			<!-- AREA ULTIMOS PRODUCTOS -->
+			<section id="ultimos-productos" class="row">
+
 			</section>
 		</main>
 		<footer class="py-5 bg-dark">
@@ -56,185 +48,70 @@
 		</footer>
 		<script src="https://blackrockdigital.github.io/startbootstrap-shop-item/vendor/jquery/jquery.min.js"></script>
 		<script src="https://blackrockdigital.github.io/startbootstrap-shop-item/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-		<script src="https://apis.google.com/js/platform.js" async defer></script>
+		<script src="https://apis.google.com/js/api:client.js"></script>
 		<script src="producto.class.js"></script>
 		<script>
-			////////////// LOGIN CON GOOGLE /////////////
+			//////////// LOGIN CON GOOGLE ////////////
+			const bienvenida = () => {
+				document.querySelector("#logout span").innerText = user.getName() // Mostrar el nombre del usuario
+				document.querySelector("#logout").parentNode.classList.remove("d-none") // Muestro el boton logout
+				document.querySelector("#login").parentNode.classList.add("d-none") // Oculto el boton ingresar				
+			}
 
 
 			gapi.load("auth2", function(){
-
-				window.auth = gapi.auth2.init({ // Estamos creando una variable global (una propiedad a la variable window)
-					client_id : "238235070701-a4rq3is6v4ntub6n72nd4ukmplj4rq0a.apps.googleusercontent.com", // lo saque del json que baje de google
+				window.auth = gapi.auth2.init({
+					client_id : "238235070701-6r207pblalhivjopvp43p0n2172o69ss.apps.googleusercontent.com",
 					cookiepolicy : "single_host_origin"
-				}) 
-
+				})
 			})
-
-			// Mëtodos importantes de Google Sign In
+			// Metodos importantes de Google Sign-In
 			// -------------------------------------
-			// auth.isSignedIn.get() // chequea si esta logueado
-			// auth.signIn() // para loguearme
-			// auth.signOut() // para desloguearme
-			// auth.currentUser.get() // para consultar la info
+			// auth.isSignedIn.get() //<-- Chequea si esta logueado (true/false)
+			// auth.signIn() //<-- Abre el Popup para loguearse
+			// auth.signOut() //<-- Cierra la sesion del usuario logueado
+			// auth.currentUser.get() //<-- Obtener los datos basicos del usuario logueado
 
+			document.querySelector("#login").onclick = function(e) { // e es de event
 
-			////////////// LOGIN CON GOOGLE /////////////
+				e.preventDefault() // aDesactivo el hipervínculo que tiene por defecto
 
-			/* Persistencia en JavaScript con la API Storage */
-			// window.localStorage (la info permanente hasta que se borra) && window.sessionStorage (si cierro la pestaña, se borra) //
+				if( auth.isSignedIn.get() == true ){
+					// Está logueado
+					bienvenida()
 
-			//window.localStorage.setItem("PRODUCTOS", "Dato que guardo") // nuevo almacenamiento. Nombre que lo va a identificar / Qué voy a guardar
-			//window.localStorage.setItem("USUARIOS", "Dato que guardo 2") 
-			//alert ( window.localStorage.getItem("PRODUCTOS") ) // consulta
-			//window.localStorage.removeItem("USUARIOS") // elimina
-			//window.localStorage.clear() // limpia todo
+				} else {
+					// No esta logueado
+					auth.signIn().then(function(){
 
-			// Creando una función asincrónica con JavaScript utilizando promise (crea un objeto difereido)
-/*           	const promesa = new Promise(function(ok, error){
+						window.user = auth2.currentUser.get().getBasicProfile() // Obtengo los datos del usuario
+						bienvenida()
+					})
+				}
+			}
 
-				window.setTimeout(function(){
-
-					let numerito = Math.random()
-
-					if( numerito < 0.5 ) {
-						ok(`${numerito} vale menos que 0.5`)
-					} else {
-						error(`${numerito} vale más que 0.5`)
-					}
-				}, 5000) 
-						
-			})
-
-			promesa.then(function(rta){ // Esto ocurre cuando sale bien
-				alert(`${rta} (mensaje desde el método then)`)
-			}) 
-
-			promesa.catch(function(rta){// Esto ocurre cuando sale mal
-
-				alert(`${rta} (mensaje desde el método catch)`)
-			}) 
-
-			promesa.finally(function(){
-				confirm("se entendio?")
-			})
-*/
-
-
-			//////////////////////////////////////////////
-/*
-			const promesa = new Promise(function(ok, error){
-
-				if( !window.localStorage.getItem("PRODUCTOS") ){ // Sino no existe el localStorage, traer los datos de la API
-					
-					const ajax = new XMLHttpRequest()
-					ajax.open("GET", "https://api.myjson.com/bins/dcg2p")
-					ajax.onload = function(){ //peticion exitosa
-
-						if( this.status == 200 ){
-
-							// Guardar datos de la petición
-
-							window.localStorage.setItem("PRODUCTOS", this.response)
-
-							ok(this.response) // Ejecutamos el metodo then
-						}else {
-							this.onerror()
-						}
-					}
-					ajax.onerror = function(){ // Peticion erronea
-
-						error( this.statusText)
-					
-					} 	
-					ajax.send()	// ejecutar peticion asincronica (esperar a que responda la respuesta del server)		
-				} else{ // Si existe el localStorage lo usamos para crear/mostrar los objetos producto
-					ok( window.localStorage.getItem("PRODUCTOS") ) // Ejecuto el metodo then
-				}				
-			})
-
-			promesa.then(function(rta){ // ocurre cuando hay datos en el storege
-
-				let productos = Producto.parse(rta)
-
-				productos.forEach(producto => {
-					
-					producto.Mostrar()
-				})
-			})
-
-			promesa.catch(function(rta){
-
-				document.querySelector("#productos-destacados").innerText = "Error amigo"
-
-			})
-
-			promesa.finally(function(){
-				confirm("Se entendio?")
-			})
-*/
-
-			//////////////////////////
-
-			// AJAX Moderno con el método fetch()//
-/*
-			fetch("https://api.myjson.com/bins/dcg2p").then(function(rta){  // Obtener lo del link. No hace falta el JSON parse.
-
-				return rta.json() 
-
-			}).then(function(items){
-
-				return items[2]
-
-			}).then(function(item){
-
-				return item.Nombre
-
-			}).then(function(nombre){
-
-				console.log( nombre )
-
-			})
-*/
-
+			//////////// LOGIN CON GOOGLE ////////////
+			
+			//* AJAX Moderno con el metodo fetch() *//
 			const crearCatalogo = function(items){
-
 				let productos = Producto.parse(items)
-
-				let descuento = confirm("Aplicar descuento de 50%?") ? 50 : -1	
-
-				productos.forEach( producto => { 
-
-					producto.Mostrar("#productos-destacados") 
-
-					producto.aplicarDescuento(descuento)
+				// descuento = confirm("Aplicar descuento de 50%?") ? 50 : -1
+				productos.forEach( producto => {
+					
+					producto.Mostrar("#ultimos-productos")
+					//producto.aplicarDescuento(30)
 				})
 			}
-
-		/*	if( !window.localStorage.getItem("PRODUCTO")){
-				// Obtener los datos de la API
-				fetch("https://api.myjson.com/bins/dcg2p").then(function(rta){
-
-					return rta.json()
-
-				}).then(function(items){
-
-					window.localStorage.setItem("PRODUCTO", JSON.stringify(items)) // Vuelvo a convertir en string los objetos del JSON
-					crearCatalogo(items) // Los paso como object
-				})
-		*/  //// VERSION SIMPLIFICADA CON ARROW FUNCTION ( saco paréntesis porque es una sola variable y los corchetes porque solo hace el return)
-			if( !window.localStorage.getItem("PRODUCTOS")){
-			// Obtener los datos de la API
+			if( !window.localStorage.getItem("PRODUCTOS") ){ // ↓ Obtener los datos de la API
 				fetch("https://api.myjson.com/bins/dcg2p")
-				.then(rta => rta.json() ) // no hace falta ni escribir el return
+				.then(rta => rta.json() )
 				.then(items => {
-					window.localStorage.setItem("PRODUCTOS", JSON.stringify(items)) // Vuelvo a convertir en string los objetos del JSON
-					crearCatalogo(items) // Los paso como object
+					window.localStorage.setItem("PRODUCTOS", JSON.stringify(items) )
+					crearCatalogo(items) //<-- Los paso como Object
 				})
-			} else {
-				crearCatalogo( window.localStorage.getItem("PRODUCTOS") ) // Los paso como string
+			} else { // ↓ Obtener los datos del Local Storage
+				crearCatalogo( window.localStorage.getItem("PRODUCTOS") ) //<-- Los paso como String
 			}
-
 		</script>
 	</body>
 </html>

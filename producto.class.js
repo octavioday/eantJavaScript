@@ -1,9 +1,8 @@
-// La clase es como un plano donde se define la arquitectura
 class Producto {
 
 	// CONSTRUCTOR
 
-	constructor(id, n, s, p, i, d = true){  // En el caso de que d no este definido, asignale true
+	constructor(id, n, s, p, i, d = true){
 		// Atributos
 		this.ID = id
 		this.nombre = n
@@ -27,13 +26,15 @@ class Producto {
 		return "$" + (this.precio * 1.21).toFixed(2) // Que muestre el dato con dos decimales unicamente
 	}
 
-	set Precio(value){ // Si tiene value es un set pq esta recibiendo un dato
-		if( value == "" || value == null || value == undefined || isNaN(value) == true ) {
-			console.error("ERROR. Valor ingresado no válido")
-		} else {
-			this.precio = value  // Puedo actualizar el precio
-		}	
-	}
+	  set Precio(value){
+
+	    if( isNaN(value) != true ){
+	      this.precio = value
+	    } else {
+	      console.error("ERROR: Valor ingresado NO válido")
+	    }
+
+	  }
 
 	set Disponible (value){ // Se usan las mayúsculas para los metodos de uso público y con minúscula los privados (como el constructor)
 
@@ -47,18 +48,7 @@ class Producto {
 
 	// METODOS DE INSTANCIA
 
-	Mostrar(selector){ // Ejemplo "#productos-destacados"
-
-/*	let ficha = document.querySelector(".producto").cloneNode(true)
-
-			ficha.querySelector(".card-title a").innerText = this.nombre
-			ficha.querySelector(".card-body h5").innerText = this.Precio // Con mayúscula uso el geter
-			ficha.querySelector(".card-img-top").src = this.imagen
-
-			ficha.classList.remove("d-none")
-
-		document.querySelector("#productos-destacados").appendChild( ficha )
-*/
+	Mostrar(selector){ 
 
 		let estilo = this.disponible ? "bg-white text-dark" : "bg-dark text-light"
 
@@ -86,14 +76,6 @@ class Producto {
 
 		// Manipulación de comportamiento
 		this.vDOM.querySelector("button").onclick = (e) => { // si uso function, el this es el button no el producto (superior)
-
-		/*
-			let accion = this.disponible ? "deshabilitar" : "habilitar"
-
-			let pregunta = `Esta seguro que desea ${accion} el producto ${this.nombre}?`
-
-			if ( confirm(pregunta) ) this.disponible = !this.disponible // no hace falta el == true ni las llaves pq es la unica validacion que hace
-		*/
 
 			this.Disponible = !this.disponible // usamos el seter
 
@@ -147,51 +129,40 @@ class Producto {
 
 
 	sincronizar(){
+	    //¿como?
+	    let storage = JSON.parse( localStorage.getItem("PRODUCTOS") ) //<-- de JSON a Object
 
-		let storage = JSON.parse( localStorage.getItem("PRODUCTOS") )// De JSON a object
+	    //let foundItem = storage.find(item => item.idProducto == this.ID)
+	    let foundIndex = storage.findIndex(item => item.idProducto == this.ID)
 
-		// let foundItem = storage.find(item => item.idProducto == this.ID)
+	    //storage[foundIndex]. //<-- { idProducto:???,Nombre:"???",Precio:???,Marca:"???",Categoria:"???",Presentacion:"???",Stock:???,Imagen:"???",Disponible:???}
 
-		let foundIndex = storage.findIndex(item => item.idProducto == this.ID)
+	    storage[foundIndex].Precio = this.precio
+	    storage[foundIndex].Imagen = this.imagen
+	    storage[foundIndex].Disponible = this.disponible
 
-		storage[foundIndex].Precio = this.precio // Para que el dato quede almacenado en mi base
-		storage[foundIndex].Disponible = this.disponible
-		storage[foundIndex].Imagen = this.imagen
+	    console.log( storage[foundIndex] )
 
-		localStorage.setItem("PRODUCTOS", JSON.stringify(storage) )
-
-/*		storage.forEach( item => {
-
-			if( item.idProducto == this.ID){
-
-				item.Nombre = this.nombre
-				item.Stock = this.stock
-				item.Precio = this.precio
-				item.Disponible = this.disponible
-				return
-			}
-
-		} )
-
-*/
-		//localStorage.setItem("PRODUCTOS", JSON.stringify(storage)) // De object a JSON
+	    localStorage.setItem("PRODUCTOS", JSON.stringify(storage) ) //<-- de Object a json
 	}
 
 	// METODOS DE CLASE (estáticos)
 
 	static parse(json){
 		
-		// let datos = JSON.parse(json) --- No haxce falta parsearlo pq lo estoy haciendo con el método fetch
+	    let datos = (typeof json == "string") ? JSON.parse(json) : json
 
-		let datos = (typeof json == "string") ? JSON.parse(json) : json // Método ternario
+	    if( datos instanceof Array ){
 
-		if( datos instanceof Array ){ 
+	      //1) Recorrer el Array de Object para instanciar objetos Producto y retornarlos
+	      return datos.map(item => new Producto(item.idProducto, item.Nombre, item.Stock, item.Precio, item.Imagen, item.Disponible) ) //2) <-- Instanciar un objeto Producto con los datos de cada Object
 
-			return datos.map( item => new Producto(item.idProducto, item.Nombre, item.Stock, item.Precio, item.Imagen, item.Disponible) ) // Esto simplifica el proceso de la clase 3.
+	    } else if( datos instanceof Object ){
 
-		} else if ( datos instanceof Object){ // En el caso que la API me diera los datos de un solo producto
-			let producto = new Producto(datos.idProducto, datos.Nombre, datos.Stock, datos.Precio, datos.disponible, datos.Imagen)
-			console.error("No convierto nada en Producto")
-		}
+	      return new Producto(datos.idProducto, datos.Nombre, datos.Stock, datos.Precio, datos.Imagen, datos.Disponible)
+
+	    } else {
+	      console.error("Ya fue... no convierto nada en Producto")
+	    }
 	}
 }
